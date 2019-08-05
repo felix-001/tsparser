@@ -45,6 +45,7 @@ typedef struct {
 } pat_t;
 
 extern int find_pat( const char *buf, int len, pat_t *pat );
+extern void dump_pat( pat_t *pat );
 
 
 #endif  /*PAT_H*/

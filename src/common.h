@@ -1,4 +1,4 @@
-// Last Update:2019-08-04 22:32:34
+// Last Update:2019-08-05 17:01:31
 
 
 #ifndef COMMON_H
@@ -9,6 +9,7 @@
         LOGE("error\n"); \
         goto err;\
     }
+
 #define MALLOC_STRUCT( ptr, type )  \
 do { \
     ptr = (type *)malloc( sizeof(type) ); \
@@ -18,6 +19,8 @@ do { \
     } \
     memset( ptr, 0, sizeof(type)  ); \
 } while(0)
+
+#define CHECK_PARAM( param )  if ( (param) ) { LOGE("check param error\n"); goto err; }
 
 #define ARRSZ(arr) ((sizeof(arr))/(arr[0]))
 typedef uint8_t u8;

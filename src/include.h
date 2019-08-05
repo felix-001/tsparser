@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <fcntl.h>
+#include <errno.h>
 #include "log.h"
 #include "common.h"
 

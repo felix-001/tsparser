@@ -1,4 +1,4 @@
-// Last Update:2019-08-04 17:55:56
+// Last Update:2019-08-05 14:57:46
 
 #include <getopt.h>
 #include <sys/types.h>
@@ -81,6 +81,7 @@ int main( int argc, char *argv[] )
     CALL( console_parse(argc, argv, &param) );
     CALL( fd = open(param.input, O_RDONLY) );
     CALL( fstat( fd, &sb ) );
+    LOGI("%s size : %lld\n", param.input, sb.st_size);
     addr = mmap( NULL, sb.st_size, PROT_READ, MAP_SHARED,fd, 0);
     if ( addr == MAP_FAILED ) {
         LOGE("map failed\n");
