@@ -1,4 +1,4 @@
-// Last Update:2019-08-05 17:28:11
+// Last Update:2019-08-06 14:19:20
 
 #include "include.h"
 #include "mpegts.h"
@@ -13,6 +13,7 @@ int find_pat( const char *buf_ptr, int len, pat_t *pat )
     ts_packet_hdr_t *pkt_hdr;
 
     while( buf_ptr <= buf_end ) {
+        _buf_ptr = buf_ptr;
         if ( *_buf_ptr != 0x47 ) {
             LOGE("check sync code : 0x47 error\n");
             goto err;

@@ -1,10 +1,11 @@
-// Last Update:2019-08-05 14:25:53
+// Last Update:2019-08-06 10:43:48
 
 
 #ifndef MPEGTS_H
 #define MPEGTS_H
 
 #include "pat.h"
+#include "pmt.h"
 
 #define TS_PACKET_LEN (188)
 
@@ -38,8 +39,7 @@ typedef struct{
 
 typedef struct {
     pat_t pat;
-    uint16_t video_pid;
-    uint16_t audio_pid;
+    pmt_t pmt;
 } ts_stream_t;
 
 extern int parse_ts( char *buf, int len );
