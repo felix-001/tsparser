@@ -1,4 +1,4 @@
-// Last Update:2019-08-05 16:50:51
+// Last Update:2019-08-06 15:27:56
 
 
 #ifndef LOG_H
@@ -33,5 +33,6 @@
 #define BASIC() printf("%s:%d(%s) %% ", __FILE__, __LINE__, __FUNCTION__)
 #define LOGI(args...) BASIC();printf(args)
 #define LOGE(args...) printf( RED"%s:%d(%s) %% "NONE, __FILE__, __LINE__, __FUNCTION__);printf(args)
+extern void dbg_arr_dump( uint8_t *buf, int len );
 
 #endif  /*LOG_H*/

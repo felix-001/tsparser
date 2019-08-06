@@ -1,4 +1,4 @@
-// Last Update:2019-08-06 10:53:59
+// Last Update:2019-08-06 15:37:20
 
 #include "include.h"
 #include "pmt.h"
@@ -36,6 +36,10 @@ int find_pmt( const char *buf_ptr, int len, uint16_t pmt_pid, pmt_t *pmt )
             pmt->hdr = *(pmt_hdr_t *)_buf_ptr;
             if( !pmt->hdr.section_syntax_indicator ) {
                 LOGE("check pmt section_syntax_indicator error\n");
+                goto err;
+            }
+            if ( pmt->hdr.table_id != 0x02 ) {
+                LOGE("pmt check table_id error\n");
                 goto err;
             }
             section_length = pmt->hdr.section_length_hi << 8 | pmt->hdr.section_length_lo;
@@ -76,10 +80,15 @@ void dump_pmt( pmt_t *pmt )
 {
     CHECK_PARAM( !pmt );
 
-    LOGI("pmt program number : 0x%x\n", pmt->hdr.program_number_hi<<8 | pmt->hdr.program_info_length_lo );
+    dbg_arr_dump( (uint8_t*)&pmt->hdr, 32 );
+    LOGI("pmt table_id : 0x%x\n", pmt->hdr.table_id );
+    LOGI("pmt->hdr.program_info_length_lo = 0x%x\n", pmt->hdr.program_info_length_lo);
+    LOGI("pmt->hdr.program_info_length_hi = 0x%x\n", pmt->hdr.program_info_length_hi);
+    LOGI("pmt program number : 0x%x\n", ((pmt->hdr.program_number_hi)<<8 | pmt->hdr.program_info_length_lo) );
     LOGI("video pid : 0x%x\n", pmt->video_pid);
     LOGI("audio pid : 0x%x\n", pmt->audio_pid );
 
 err:
     return;
 }
+
