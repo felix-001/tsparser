@@ -1,4 +1,4 @@
-// Last Update:2019-08-06 15:37:20
+// Last Update:2019-08-06 23:08:49
 
 #include "include.h"
 #include "pmt.h"
@@ -80,11 +80,8 @@ void dump_pmt( pmt_t *pmt )
 {
     CHECK_PARAM( !pmt );
 
-    dbg_arr_dump( (uint8_t*)&pmt->hdr, 32 );
     LOGI("pmt table_id : 0x%x\n", pmt->hdr.table_id );
-    LOGI("pmt->hdr.program_info_length_lo = 0x%x\n", pmt->hdr.program_info_length_lo);
-    LOGI("pmt->hdr.program_info_length_hi = 0x%x\n", pmt->hdr.program_info_length_hi);
-    LOGI("pmt program number : 0x%x\n", ((pmt->hdr.program_number_hi)<<8 | pmt->hdr.program_info_length_lo) );
+    LOGI("pmt program number : 0x%x\n", ((pmt->hdr.program_number_hi)<<8 | pmt->hdr.program_number_lo) );
     LOGI("video pid : 0x%x\n", pmt->video_pid);
     LOGI("audio pid : 0x%x\n", pmt->audio_pid );
 
