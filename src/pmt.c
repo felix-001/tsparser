@@ -22,7 +22,6 @@ int find_pmt( const char *buf_ptr, int len, uint16_t pmt_pid, pmt_t *pmt )
         }
         pkt_hdr = (ts_packet_hdr_t*)_buf_ptr;
         pid = pkt_hdr->pid_hi * 256 + pkt_hdr->pid_lo; 
-        LOGI("pid = 0x%x\n", pid );
         if ( pid == pmt_pid ) {
             LOGI("found pmt pid\n");
             if ( pkt_hdr->adaptation_field_control != 0x01 ) {

@@ -23,6 +23,17 @@ do { \
 #define CHECK_PARAM( param )  if ( (param) ) { LOGE("check param error\n"); goto err; }
 
 #define ARRSZ(arr) ((sizeof(arr))/(arr[0]))
+
+#   define AV_RB32(x)                           \
+    ((((const uint8_t*)(x))[0] << 24) |         \
+     (((const uint8_t*)(x))[1] << 16) |         \
+     (((const uint8_t*)(x))[2] <<  8) |         \
+     ((const uint8_t*)(x))[3])
+
+#   define AV_RB16(x)                           \
+    ((((const uint8_t*)(x))[0] << 8) |         \
+     (((const uint8_t*)(x))[1] ))
+
 typedef uint8_t u8;
 
 #endif  /*COMMON_H*/
