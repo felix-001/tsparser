@@ -1,12 +1,33 @@
-// Last Update:2019-08-07 18:46:20
+// Last Update:2019-08-08 12:35:39
 
 #include "include.h"
+
+#define PES_FIX_HEADER_LEN (3+1+2)// packet_start_code_prefix: 3, stream id : 1, PES_packet_length : 2
+#define PES_OPT_HEADER_LEN (3)
 
 static inline int64_t ff_parse_pes_pts(const uint8_t *buf) 
 {
     return (int64_t)(*buf & 0x0e) << 29 |
             (AV_RB16(buf+1) >> 1) << 15 |
              AV_RB16(buf+3) >> 1;
+}
+
+int parse_h264(const char *buf_ptr, pes_t *pes )
+{
+    const char *startcode[] = { 0x00, 0x00, 0x00, 0x01 };
+
+    CHECK_PARAM( !buf_ptr || !pes );
+
+    if ( memcmp( buf_ptr, startcode, sizeof(startcode)) != 0 ) {
+        LOGE("check nalu start code error\n");
+        goto err;
+    }
+    buf_ptr += 4;
+    pes->nalu_type = (*buf_ptr) & 0x1f;
+
+    return 0;
+err:
+    return -1;
 }
 
 int parse_pes_packet(const char *_buf_ptr, int len, int is_start, uint16_t pid, ts_stream_t *stream)
@@ -55,6 +76,43 @@ int parse_pes_packet(const char *_buf_ptr, int len, int is_start, uint16_t pid, 
             goto err;
         }
         buf_ptr += pes->opt_hdr.PES_header_data_length;
+        CALL( parse_h264(buf_ptr, pes) );
+        pes->real_length += (TS_PACKET_LEN - sizeof(ts_packet_hdr_t) 
+            - PES_FIX_HEADER_LEN - PES_OPT_HEADER_LEN - pes->opt_hdr.PES_header_data_length);
+    } else {
+        pes->real_length += (TS_PACKET_LEN - sizeof(ts_packet_hdr_t) );
+    }
+
+    return 0;
+err:
+    return -1;
+}
+
+int check_continuity_counter( ts_packet_hdr_t *hdr, ts_stream_t *stream )
+{
+    uint16_t pid;
+
+    CHECK_PARAM( !hdr || !stream );
+
+    pid = hdr->pid_hi * 256 + hdr->pid_lo; 
+
+    if ( pid == stream->pmt.video_pid ) {
+        if ( stream->last_video_counter < 0 ) {
+            stream->last_video_counter = hdr->continuity_counter;
+        } else if ( stream->last_video_counter >= hdr->continuity_counter ) {
+            LOGE("check video continuity_counter error\n");
+            goto err;
+        }
+    } else if ( pid == stream->pmt.audio_pid ) {
+        if ( stream->last_audio_counter < 0 ) {
+            stream->last_audio_counter = hdr->continuity_counter;
+        } else if ( stream->last_audio_counter >= hdr->continuity_counter ) {
+            LOGE("check audio continuity_counter error\n");
+            goto err;
+        }
+    } else {
+        LOGE("check pid error\n");
+        goto err;
     }
 
     return 0;
@@ -74,6 +132,11 @@ int parse_pes( const char *_buf_ptr, int len, ts_stream_t *stream )
         hdr = (ts_packet_hdr_t *)buf_ptr;
         pid = hdr->pid_hi * 256 + hdr->pid_lo; 
         if ( pid == stream->pmt.video_pid || pid == stream->pmt.audio_pid ) {
+            CALL( check_continuity_counter( hdr, stream ) );
+            if ( hdr->adaptation_field_control == 0x02 || hdr->adaptation_field_control == 0x03 ) {
+                LOGE("pes packet has adaption filed, skip\n");
+                continue;
+            }
             CALL( parse_pes_packet( buf_ptr + sizeof(ts_packet_hdr_t),
                                     TS_PACKET_LEN - sizeof(ts_packet_hdr_t), (hdr->payload_unit_start_indicator == 1), pid, stream ) );
         }

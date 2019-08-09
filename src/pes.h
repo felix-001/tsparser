@@ -1,8 +1,15 @@
-// Last Update:2019-08-07 10:24:38
+// Last Update:2019-08-07 18:48:38
 
 
 #ifndef PES_H
 #define PES_H
+
+#define NALU_TYPE_IDR 5
+#define NALU_TYPE_SEI 6
+#define NALU_TYPE_SPS 7
+#define NALU_TYPE_PPS 8
+#define NALU_TYPE_NON_IDR 1
+#define NALU_TYPE_AUD 9
 
 typedef struct {
 #ifdef WORDS_BIGENDIAN

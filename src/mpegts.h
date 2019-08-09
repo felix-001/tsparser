@@ -1,4 +1,4 @@
-// Last Update:2019-08-07 10:26:32
+// Last Update:2019-08-07 10:27:12
 
 
 #ifndef MPEGTS_H
@@ -43,6 +43,8 @@ typedef struct {
     pmt_t pmt;
     int audio_index;
     int video_index;
+    int last_video_counter;
+    int last_audio_counter;
     pes_t videos[MAX_FRAME_COUNT];
     pes_t audios[MAX_FRAME_COUNT];
 } ts_stream_t;

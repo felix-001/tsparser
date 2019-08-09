@@ -10,6 +10,8 @@ int parse_ts( char *buf, int len )
     ts_stream_t *stream;
 
     MALLOC_STRUCT( stream, ts_stream_t );    
+    stream->last_video_counter = -1;
+    stream->last_audio_counter = -1;
     CALL( find_pat( buf, len, &stream->pat ) );
     dump_pat( &stream->pat );
     CALL( find_pmt( buf, len, stream->pat.pmt_list[0].pmt_pid, &stream->pmt ) );
